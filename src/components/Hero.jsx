@@ -52,8 +52,8 @@ const Hero = () => {
         </button>
       </div>
       
-      {/* Scroll down mouse indicator */}
-      <div className="absolute bottom-8 right-8 z-10">
+      {/* Scroll down mouse indicator - Hidden on mobile and tablet */}
+      <div className="absolute bottom-8 right-8 z-10 hidden lg:block">
         <img 
           src={scrollMouse} 
           alt="Scroll down" 

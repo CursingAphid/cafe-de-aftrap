@@ -8,15 +8,15 @@ const Header = () => {
 
   useEffect(() => {
     // Set initial visibility based on current route
-    if (location.pathname === '/menu') {
+    if (location.pathname === '/menu' || location.pathname === '/contact') {
       setIsVisible(true);
     }
   }, [location.pathname]);
 
   useEffect(() => {
     const handleScroll = () => {
-      // Always show header on menu page
-      if (location.pathname === '/menu') {
+      // Always show header on menu and contact pages
+      if (location.pathname === '/menu' || location.pathname === '/contact') {
         setIsVisible(true);
         return;
       }
@@ -70,12 +70,16 @@ const Header = () => {
             >
               Menu
             </Link>
-            <a 
-              href="#contact" 
-              className="text-white px-4 py-2 text-sm font-medium uppercase tracking-wide hover:text-gray-300 transition-colors duration-200"
+            <Link 
+              to="/contact" 
+              className={`px-4 py-2 text-sm font-medium uppercase tracking-wide transition-colors duration-200 ${
+                location.pathname === '/contact' 
+                  ? 'bg-gray-800 text-white' 
+                  : 'text-white hover:text-gray-300'
+              }`}
             >
               Contact
-            </a>
+            </Link>
           </nav>
         </div>
       </div>

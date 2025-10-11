@@ -198,7 +198,7 @@ const MenuPage = () => {
       <section 
         className="relative w-full flex items-center justify-center overflow-hidden"
         style={{
-          height: '400px',
+          height: '300px',
           paddingTop: '80px',
           backgroundImage: `url(${backgroundImage})`,
           backgroundSize: 'cover',
@@ -218,7 +218,7 @@ const MenuPage = () => {
         
         {/* Menu Title */}
         <div className="relative z-10 text-center">
-          <h1 className="text-6xl sm:text-7xl lg:text-8xl font-bold text-white leading-tight">
+          <h1 className="text-6xl sm:text-7xl lg:text-8xl font-bold text-white leading-tight fade-in-hero-title">
             Menu
           </h1>
         </div>
