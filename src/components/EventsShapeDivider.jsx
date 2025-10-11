@@ -15,7 +15,7 @@ const EventsShapeDivider = ({ topColor, bottomColor }) => {
         />
         {/* Bottom section with jagged edge extending downward */}
         <path
-          d="M0,120L90,35L180,95L270,25L360,85L450,15L540,90L630,30L720,80L810,20L900,75L990,10L1080,70L1170,5L1200,50L1200,120Z"
+          d="M0,120L150,40L300,100L450,20L600,90L750,10L900,85L1200,25L1200,120Z"
           fill={bottomColor}
         />
       </svg>

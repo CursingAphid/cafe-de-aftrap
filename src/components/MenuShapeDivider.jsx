@@ -15,7 +15,7 @@ const MenuShapeDivider = ({ topColor, bottomColor }) => {
         />
         {/* Bottom section with different jagged edge extending downward */}
         <path
-          d="M0,120L80,40L160,100L240,20L320,90L400,10L480,85L560,25L640,95L720,15L800,80L880,30L960,75L1040,5L1120,85L1200,40L1200,120Z"
+          d="M0,120L240,25L480,95L720,10L960,80L1200,20L1200,120Z"
           fill={bottomColor}
         />
       </svg>

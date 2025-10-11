@@ -1,11 +1,26 @@
 import React, { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import logo from '../assets/aftrap logo.png';
 
 const Header = () => {
   const [isVisible, setIsVisible] = useState(false);
+  const location = useLocation();
+
+  useEffect(() => {
+    // Set initial visibility based on current route
+    if (location.pathname === '/menu') {
+      setIsVisible(true);
+    }
+  }, [location.pathname]);
 
   useEffect(() => {
     const handleScroll = () => {
+      // Always show header on menu page
+      if (location.pathname === '/menu') {
+        setIsVisible(true);
+        return;
+      }
+      
       const heroSection = document.getElementById('hero-section');
       if (heroSection) {
         const rect = heroSection.getBoundingClientRect();
@@ -16,7 +31,7 @@ const Header = () => {
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [location.pathname]);
 
   return (
     <header className={`bg-black w-full fixed top-0 z-50 transition-transform duration-300 ${isVisible ? 'translate-y-0' : '-translate-y-full'}`}>
@@ -24,27 +39,37 @@ const Header = () => {
         <div className="flex items-center justify-between h-20">
           {/* Logo Section */}
           <div className="flex-shrink-0">
-            <img 
-              src={logo} 
-              alt="De Aftrap Logo" 
-              className="h-16 w-auto"
-            />
+            <Link to="/">
+              <img 
+                src={logo} 
+                alt="De Aftrap Logo" 
+                className="h-16 w-auto"
+              />
+            </Link>
           </div>
           
           {/* Navigation Section */}
           <nav className="flex space-x-8">
-            <a 
-              href="#home" 
-              className="bg-gray-800 text-white px-4 py-2 text-sm font-medium uppercase tracking-wide hover:bg-gray-700 transition-colors duration-200"
+            <Link 
+              to="/" 
+              className={`px-4 py-2 text-sm font-medium uppercase tracking-wide transition-colors duration-200 ${
+                location.pathname === '/' 
+                  ? 'bg-gray-800 text-white' 
+                  : 'text-white hover:text-gray-300'
+              }`}
             >
               Home
-            </a>
-            <a 
-              href="#menu" 
-              className="text-white px-4 py-2 text-sm font-medium uppercase tracking-wide hover:text-gray-300 transition-colors duration-200"
+            </Link>
+            <Link 
+              to="/menu" 
+              className={`px-4 py-2 text-sm font-medium uppercase tracking-wide transition-colors duration-200 ${
+                location.pathname === '/menu' 
+                  ? 'bg-gray-800 text-white' 
+                  : 'text-white hover:text-gray-300'
+              }`}
             >
               Menu
-            </a>
+            </Link>
             <a 
               href="#contact" 
               className="text-white px-4 py-2 text-sm font-medium uppercase tracking-wide hover:text-gray-300 transition-colors duration-200"

@@ -15,7 +15,7 @@ const SocialShapeDivider = ({ topColor, bottomColor }) => {
         />
         {/* Bottom section with jagged edge extending downward */}
         <path
-          d="M0,120L100,30L200,90L300,20L400,80L500,10L600,85L700,25L800,75L900,15L1000,70L1100,5L1200,60L1200,120Z"
+          d="M0,120L171,35L342,95L513,25L684,85L855,15L1026,90L1200,30L1200,120Z"
           fill={bottomColor}
         />
       </svg>

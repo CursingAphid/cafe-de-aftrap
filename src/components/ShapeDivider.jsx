@@ -15,7 +15,7 @@ const ShapeDivider = ({ topColor, bottomColor }) => {
         />
         {/* Bottom section with jagged edge extending downward */}
         <path
-          d="M0,120L120,20L280,100L450,15L580,85L750,5L920,90L1050,25L1200,75L1200,120Z"
+          d="M0,120L200,30L400,90L600,20L800,85L1000,15L1200,70L1200,120Z"
           fill={topColor}
         />
       </svg>

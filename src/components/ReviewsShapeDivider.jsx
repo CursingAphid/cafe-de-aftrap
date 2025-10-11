@@ -15,7 +15,7 @@ const ReviewsShapeDivider = ({ topColor, bottomColor }) => {
         />
         {/* Bottom section with jagged edge extending downward */}
         <path
-          d="M0,120L70,40L140,100L210,25L280,85L350,15L420,90L490,30L560,80L630,20L700,75L770,10L840,70L910,25L980,85L1050,5L1120,60L1190,35L1200,50L1200,120Z"
+          d="M0,120L200,40L400,100L600,20L800,90L1000,10L1200,80L1200,120Z"
           fill={bottomColor}
         />
       </svg>

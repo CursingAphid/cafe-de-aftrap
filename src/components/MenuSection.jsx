@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import cafeImage from '../assets/cafe-de-aftrap-2.jpeg';
 
 const MenuSection = () => {
@@ -27,15 +28,12 @@ const MenuSection = () => {
             </div>
 
             {/* Menu Button */}
-            <button 
-              onClick={() => {
-                // Add menu functionality here
-                console.log('Menu button clicked');
-              }}
-              className="bg-gray-600 hover:bg-gray-500 text-white font-semibold py-4 px-8 rounded-lg text-lg transition-colors duration-300 shadow-lg hover:shadow-xl"
+            <Link 
+              to="/menu"
+              className="inline-block bg-gray-600 hover:bg-gray-500 text-white font-semibold py-4 px-8 rounded-lg text-lg transition-colors duration-300 shadow-lg hover:shadow-xl"
             >
               Bekijk het menu
-            </button>
+            </Link>
           </div>
           
           {/* Right Column - Image */}
