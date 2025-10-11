@@ -27,6 +27,7 @@ const MenuPage = () => {
   const [pageNumber, setPageNumber] = useState(1);
   const [isFlipping, setIsFlipping] = useState(false);
   const [pdfWidth, setPdfWidth] = useState(600);
+  const [preloadedPages, setPreloadedPages] = useState(new Map());
 
   // Hide text layers on component mount
   React.useEffect(() => {
@@ -52,6 +53,44 @@ const MenuPage = () => {
 
   const onDocumentLoadSuccess = ({ numPages }) => {
     setNumPages(numPages);
+    
+    // Preload all pages after document loads
+    preloadAllPages(numPages);
+  };
+
+  const preloadAllPages = async (totalPages) => {
+    const newPreloadedPages = new Map();
+    
+    for (let i = 1; i <= totalPages; i++) {
+      try {
+        // Create a canvas to render the page
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        
+        // Set canvas size
+        canvas.width = pdfWidth;
+        canvas.height = (pdfWidth * 1.414); // A4 aspect ratio
+        
+        // Render page to canvas
+        const page = await pdfjs.getDocument('/Menukaart-aftrap.pdf').promise.then(doc => doc.getPage(i));
+        const viewport = page.getViewport({ scale: pdfWidth / page.getViewport({ scale: 1 }).width });
+        
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
+        
+        await page.render({
+          canvasContext: context,
+          viewport: viewport,
+        }).promise;
+        
+        // Store the canvas
+        newPreloadedPages.set(i, canvas);
+      } catch (error) {
+        console.warn(`Failed to preload page ${i}:`, error);
+      }
+    }
+    
+    setPreloadedPages(newPreloadedPages);
   };
 
   const goToPrevPage = () => {
@@ -154,19 +193,30 @@ const MenuPage = () => {
                     transition={{ duration: 0.3 }}
                     className="flex justify-center"
                   >
-                    <Document
-                      file="/Menukaart-aftrap.pdf"
-                      onLoadSuccess={onDocumentLoadSuccess}
-                      className="flex justify-center"
-                    >
-                      <Page
-                        pageNumber={pageNumber}
-                        width={pdfWidth}
-                        className="shadow-lg rounded"
-                        renderTextLayer={false}
-                        renderAnnotationLayer={false}
-                      />
-                    </Document>
+                    {preloadedPages.has(pageNumber) ? (
+                      <div className="shadow-lg rounded overflow-hidden">
+                        <img 
+                          src={preloadedPages.get(pageNumber).toDataURL()} 
+                          alt={`Menu page ${pageNumber}`}
+                          className="max-w-full h-auto"
+                          style={{ width: pdfWidth }}
+                        />
+                      </div>
+                    ) : (
+                      <Document
+                        file="/Menukaart-aftrap.pdf"
+                        onLoadSuccess={onDocumentLoadSuccess}
+                        className="flex justify-center"
+                      >
+                        <Page
+                          pageNumber={pageNumber}
+                          width={pdfWidth}
+                          className="shadow-lg rounded"
+                          renderTextLayer={false}
+                          renderAnnotationLayer={false}
+                        />
+                      </Document>
+                    )}
                   </motion.div>
                 </AnimatePresence>
               </div>
