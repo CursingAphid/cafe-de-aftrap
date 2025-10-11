@@ -2,7 +2,7 @@ import React from 'react';
 
 const MenuShapeDivider = ({ topColor, bottomColor }) => {
   return (
-    <div className="relative w-full h-20 overflow-hidden z-10">
+    <div className="relative w-full h-20 overflow-hidden z-10 -mt-1 -mb-1">
       <svg
         className="absolute top-0 left-0 w-full h-full"
         viewBox="0 0 1200 120"
