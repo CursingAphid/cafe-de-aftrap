@@ -4,12 +4,14 @@ import MenuPage from './pages/MenuPage'
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/menu" element={<MenuPage />} />
-      </Routes>
-    </Router>
+    <div className="overflow-x-hidden">
+      <Router>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/menu" element={<MenuPage />} />
+        </Routes>
+      </Router>
+    </div>
   )
 }
 

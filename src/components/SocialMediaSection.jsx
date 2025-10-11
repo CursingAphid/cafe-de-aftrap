@@ -6,8 +6,8 @@ const SocialMediaSection = () => {
     <section className="w-full py-16 text-white" style={{ backgroundColor: '#4a505c' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
-          {/* Left Column - Facebook Embed */}
-          <div className="flex justify-center lg:justify-start scroll-fade-in-left">
+          {/* Facebook Embed - First on desktop, second on mobile */}
+          <div className="flex justify-center lg:justify-start order-2 lg:order-1 scroll-fade-in-left">
             <div className="relative">
               <div 
                 className="bg-white rounded-lg shadow-2xl overflow-hidden"
@@ -27,8 +27,8 @@ const SocialMediaSection = () => {
             </div>
           </div>
           
-          {/* Right Column - Text Content */}
-          <div className="text-white scroll-fade-in-right">
+          {/* Text Content - Second on desktop, first on mobile */}
+          <div className="text-white order-1 lg:order-2 scroll-fade-in-right">
             <h2 className="text-4xl sm:text-5xl font-bold mb-8 leading-tight">
               Volg onze socials
             </h2>

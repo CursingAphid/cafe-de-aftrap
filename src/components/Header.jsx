@@ -49,7 +49,7 @@ const Header = () => {
           </div>
           
           {/* Navigation Section */}
-          <nav className="flex space-x-8">
+          <nav className="flex space-x-4">
             <Link 
               to="/" 
               className={`px-4 py-2 text-sm font-medium uppercase tracking-wide transition-colors duration-200 ${

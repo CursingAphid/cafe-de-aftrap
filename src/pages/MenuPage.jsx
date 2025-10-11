@@ -187,7 +187,7 @@ const MenuPage = () => {
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full overflow-x-hidden">
       <Header />
       
       {/* Menu Title Section */}
@@ -237,8 +237,34 @@ const MenuPage = () => {
                   whileTap={{ scale: 0.98 }}
                 >
               {/* PDF Content */}
-              <div className="overflow-hidden">
-                <div className="flex justify-center">
+              <div className="overflow-hidden relative">
+                {/* Left Arrow */}
+                <button
+                  onClick={goToPrevPage}
+                  disabled={pageNumber <= 1 || isFlipping}
+                  className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-gray-600 hover:bg-gray-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg transition-colors duration-200 z-10 hidden sm:block"
+                >
+                  ←
+                </button>
+                
+                {/* Right Arrow */}
+                <button
+                  onClick={goToNextPage}
+                  disabled={pageNumber >= numPages || isFlipping}
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-gray-600 hover:bg-gray-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg transition-colors duration-200 z-10 hidden sm:block"
+                >
+                  →
+                </button>
+                
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={pageNumber}
+                    initial={{ opacity: 0, rotateY: 90 }}
+                    animate={{ opacity: 1, rotateY: 0 }}
+                    exit={{ opacity: 0, rotateY: -90 }}
+                    transition={{ duration: 0.3 }}
+                    className="flex justify-center"
+                  >
                     {preloadedPages.has(pageNumber) ? (
                       <div className="shadow-lg rounded overflow-hidden">
                         <img 
@@ -265,40 +291,35 @@ const MenuPage = () => {
                         />
                       </Document>
                     )}
+                  </motion.div>
+                </AnimatePresence>
+                
+                {/* Bottom Controls Overlay */}
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-white from-40% via-white via-70% to-transparent pt-20 pb-8">
+                  {/* Page Counter */}
+                  <div className="flex justify-center mb-2">
+                    <span className="text-lg font-semibold text-gray-700 flex items-center">
+                      Pagina {pageNumber} van {numPages}
+                    </span>
+                  </div>
+                  
+                  {/* Swipe Instruction */}
+                  <div className="flex justify-center mb-4 sm:hidden">
+                    <span className="text-sm text-gray-600 text-center">
+                      Veeg om naar de volgende bladzijde te gaan
+                    </span>
+                  </div>
+                  
+                  {/* Open PDF Button */}
+                  <div className="flex justify-center">
+                    <button
+                      onClick={openPdfInNewTab}
+                      className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors duration-200 font-medium"
+                    >
+                      📄 Open PDF in nieuw tabblad
+                    </button>
+                  </div>
                 </div>
-              </div>
-              
-              {/* Navigation Buttons */}
-              <div className="mt-6 flex justify-center items-center space-x-4">
-                <button
-                  onClick={goToPrevPage}
-                  disabled={pageNumber <= 1 || isFlipping}
-                  className="bg-gray-600 hover:bg-gray-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg transition-colors duration-200"
-                >
-                  ←
-                </button>
-                
-                <span className="text-lg font-semibold text-gray-700 flex items-center">
-                  Pagina {pageNumber} van {numPages}
-                </span>
-                
-                <button
-                  onClick={goToNextPage}
-                  disabled={pageNumber >= numPages || isFlipping}
-                  className="bg-gray-600 hover:bg-gray-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg transition-colors duration-200"
-                >
-                  →
-                </button>
-              </div>
-              
-              {/* Open PDF Button */}
-              <div className="mt-4 flex justify-center">
-                <button
-                  onClick={openPdfInNewTab}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors duration-200 font-medium"
-                >
-                  📄 Open PDF in New Tab
-                </button>
               </div>
               
             </motion.div>

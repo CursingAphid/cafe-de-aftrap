@@ -33,8 +33,8 @@ const AboutSection = () => {
               <img 
                 src={cafeImage} 
                 alt="Café de Aftrap exterior" 
-                className="object-cover rounded-lg shadow-2xl"
-                style={{ width: '400px', height: '400px' }}
+                className="object-cover rounded-lg shadow-2xl w-full max-w-sm sm:max-w-md lg:w-96 lg:h-96"
+                style={{ aspectRatio: '1/1' }}
               />
             </div>
           </div>

@@ -17,7 +17,7 @@ const HomePage = () => {
   useScrollAnimation();
 
   return (
-    <div className="w-full">
+    <div className="w-full overflow-x-hidden">
       <Header />
       <Hero />
       <AboutSection />
