@@ -1,0 +1,101 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Hide scrollbar for all browsers */
+html {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+
+html::-webkit-scrollbar {
+  display: none; /* WebKit browsers (Chrome, Safari, Edge) */
+}
+
+body {
+  overflow-x: hidden; /* Prevent horizontal scrollbar */
+}
+
+/* Custom font size for mobile */
+@media (max-width: 767px) {
+  .mobile-title {
+    font-size: 22px !important;
+  }
+}
+
+/* Fade in animation from top to bottom */
+@keyframes fadeInFromTop {
+  0% {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-title {
+  animation: fadeInFromTop 0.6s ease-out forwards;
+  opacity: 0;
+}
+
+.fade-in-logo {
+  animation: fadeInFromTop 0.6s ease-out 0.2s forwards;
+  opacity: 0;
+}
+
+.fade-in-hero-title {
+  animation: fadeInFromTop 0.6s ease-out 0.4s forwards;
+  opacity: 0;
+}
+
+.fade-in-button {
+  animation: fadeInFromTop 0.6s ease-out 5s forwards;
+  opacity: 0;
+}
+
+/* Scroll-based animations */
+.scroll-fade-in {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.scroll-fade-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.scroll-fade-in-left {
+  opacity: 0;
+  transform: translateX(-30px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.scroll-fade-in-left.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.scroll-fade-in-right {
+  opacity: 0;
+  transform: translateX(30px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.scroll-fade-in-right.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.scroll-fade-in-top {
+  opacity: 0;
+  transform: translateY(-30px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.scroll-fade-in-top.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
