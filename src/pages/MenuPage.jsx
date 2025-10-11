@@ -182,6 +182,10 @@ const MenuPage = () => {
     threshold: 10 // Minimum distance to start detecting
   });
 
+  const openPdfInSameTab = () => {
+    window.location.href = '/Menukaart-aftrap.pdf';
+  };
+
   const openPdfInNewTab = () => {
     window.open('/Menukaart-aftrap.pdf', '_blank');
   };
@@ -223,8 +227,26 @@ const MenuPage = () => {
           {/* Menu Content Section */}
           <section className="w-full py-16 bg-white">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              {/* PDF Book Viewer */}
-              <div className="flex justify-center">
+              {/* Mobile Menu Button */}
+              <div className="flex justify-center sm:hidden">
+                <div className="text-center">
+                  <h2 className="text-3xl font-bold text-gray-800 mb-6">
+                    Bekijk ons menu
+                  </h2>
+                  <p className="text-lg text-gray-600 mb-8">
+                    Klik op de knop hieronder om onze menukaart te bekijken
+                  </p>
+                  <button
+                    onClick={openPdfInSameTab}
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-lg text-xl font-medium transition-colors duration-200 shadow-lg hover:shadow-xl"
+                  >
+                    📄 Open Menu
+                  </button>
+                </div>
+              </div>
+
+              {/* Desktop PDF Book Viewer */}
+              <div className="hidden sm:flex justify-center">
                 <motion.div 
                   {...bind()}
                   className="bg-white rounded-lg shadow-lg p-4 sm:p-8 cursor-grab active:cursor-grabbing relative select-none w-full max-w-4xl mx-auto"
@@ -323,9 +345,9 @@ const MenuPage = () => {
               </div>
               
             </motion.div>
-          </div>
-        </div>
-      </section>
+              </div>
+            </div>
+          </section>
     </div>
   );
 };
