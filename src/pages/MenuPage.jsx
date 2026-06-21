@@ -31,20 +31,19 @@ const MenuPage = () => {
     console.log('Page number changed to:', pageNumber);
   }, [pageNumber]);
   const [isFlipping, setIsFlipping] = useState(false);
-  const [pdfWidth, setPdfWidth] = useState(600);
-  const [pageAspectRatio, setPageAspectRatio] = useState(1.414);
+  const [pdfWidth, setPdfWidth] = useState(700);
+  const [pageAspectRatio, setPageAspectRatio] = useState(1);
+  const containerRef = React.useRef(null);
   const [preloadedPages, setPreloadedPages] = useState(new Map());
   const [isPreloading, setIsPreloading] = useState(false);
 
   const calculatePdfWidth = React.useCallback(() => {
-    const screenWidth = window.innerWidth;
     const screenHeight = window.innerHeight;
-    const horizontalPadding = screenWidth < 640 ? 96 : screenWidth < 768 ? 140 : 180;
-    const verticalReserved = 80 + 300 + 128 + 160;
-    const maxWidth = Math.min(screenWidth - horizontalPadding, 800);
-    const maxHeight = screenHeight - verticalReserved;
+    const containerWidth = containerRef.current?.offsetWidth ?? window.innerWidth - 120;
+    const availableWidth = containerWidth - 80;
+    const maxHeight = screenHeight * 0.85;
     const widthFromHeight = maxHeight / pageAspectRatio;
-    return Math.max(Math.floor(Math.min(maxWidth, widthFromHeight)), 280);
+    return Math.max(Math.floor(Math.min(availableWidth, widthFromHeight)), 400);
   }, [pageAspectRatio]);
 
   // Hide text layers on component mount
@@ -55,8 +54,16 @@ const MenuPage = () => {
     
     updatePdfWidth();
     window.addEventListener('resize', updatePdfWidth);
+
+    const observer = new ResizeObserver(updatePdfWidth);
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
     
-    return () => window.removeEventListener('resize', updatePdfWidth);
+    return () => {
+      window.removeEventListener('resize', updatePdfWidth);
+      observer.disconnect();
+    };
   }, [calculatePdfWidth]);
 
   React.useEffect(() => {
@@ -259,10 +266,11 @@ const MenuPage = () => {
               </div>
 
               {/* Desktop PDF Book Viewer */}
-              <div className="hidden sm:flex flex-col items-center">
+              <div className="hidden sm:flex flex-col items-center w-full">
                 <motion.div 
+                  ref={containerRef}
                   {...bind()}
-                  className="bg-white rounded-lg shadow-lg p-4 sm:p-8 cursor-grab active:cursor-grabbing relative select-none w-full max-w-4xl mx-auto"
+                  className="bg-white rounded-lg shadow-lg p-2 sm:p-4 cursor-grab active:cursor-grabbing relative select-none w-full max-w-5xl mx-auto"
                   style={{ touchAction: 'none' }}
                 >
                   <div className="relative flex justify-center items-center">
@@ -291,7 +299,7 @@ const MenuPage = () => {
                         animate={{ opacity: 1, rotateY: 0 }}
                         exit={{ opacity: 0, rotateY: -90 }}
                         transition={{ duration: 0.3 }}
-                        className="flex justify-center px-12"
+                        className="flex justify-center"
                       >
                         {preloadedPages.has(pageNumber) ? (
                           <div className="shadow-lg rounded">
