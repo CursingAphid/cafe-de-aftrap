@@ -32,30 +32,43 @@ const MenuPage = () => {
   }, [pageNumber]);
   const [isFlipping, setIsFlipping] = useState(false);
   const [pdfWidth, setPdfWidth] = useState(600);
+  const [pageAspectRatio, setPageAspectRatio] = useState(1.414);
   const [preloadedPages, setPreloadedPages] = useState(new Map());
   const [isPreloading, setIsPreloading] = useState(false);
+
+  const calculatePdfWidth = React.useCallback(() => {
+    const screenWidth = window.innerWidth;
+    const screenHeight = window.innerHeight;
+    const horizontalPadding = screenWidth < 640 ? 96 : screenWidth < 768 ? 140 : 180;
+    const verticalReserved = 80 + 300 + 128 + 160;
+    const maxWidth = Math.min(screenWidth - horizontalPadding, 800);
+    const maxHeight = screenHeight - verticalReserved;
+    const widthFromHeight = maxHeight / pageAspectRatio;
+    return Math.max(Math.floor(Math.min(maxWidth, widthFromHeight)), 280);
+  }, [pageAspectRatio]);
 
   // Hide text layers on component mount
   React.useEffect(() => {
     hideTextLayer();
     
-    // Set PDF width based on screen size
-    const updatePdfWidth = () => {
-      const screenWidth = window.innerWidth;
-      if (screenWidth < 640) { // Mobile
-        setPdfWidth(Math.min(screenWidth - 80, 400));
-      } else if (screenWidth < 768) { // Small tablet
-        setPdfWidth(Math.min(screenWidth - 120, 500));
-      } else { // Desktop
-        setPdfWidth(600);
-      }
-    };
+    const updatePdfWidth = () => setPdfWidth(calculatePdfWidth());
     
     updatePdfWidth();
     window.addEventListener('resize', updatePdfWidth);
     
     return () => window.removeEventListener('resize', updatePdfWidth);
-  }, []);
+  }, [calculatePdfWidth]);
+
+  React.useEffect(() => {
+    setPreloadedPages(new Map());
+    setIsPreloading(false);
+  }, [pdfWidth]);
+
+  React.useEffect(() => {
+    if (numPages && !isPreloading && preloadedPages.size === 0) {
+      preloadAllPages(numPages);
+    }
+  }, [pdfWidth, numPages]);
 
   // Keyboard support for navigation
   React.useEffect(() => {
@@ -73,16 +86,16 @@ const MenuPage = () => {
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, []);
 
-  const onDocumentLoadSuccess = ({ numPages }) => {
+  const onDocumentLoadSuccess = async ({ numPages }) => {
     console.log('PDF document loaded with', numPages, 'pages');
     setNumPages(numPages);
-    
-    // Only preload if not already preloading and no pages are preloaded
-    if (!isPreloading && preloadedPages.size === 0) {
-      console.log('Starting preload process...');
-      preloadAllPages(numPages);
-    } else {
-      console.log('Skipping preload - already preloading or pages exist');
+
+    try {
+      const page = await pdfjs.getDocument('/Menukaart-aftrap.pdf').promise.then(doc => doc.getPage(1));
+      const viewport = page.getViewport({ scale: 1 });
+      setPageAspectRatio(viewport.height / viewport.width);
+    } catch (error) {
+      console.warn('Failed to read PDF page dimensions:', error);
     }
   };
 
@@ -246,105 +259,83 @@ const MenuPage = () => {
               </div>
 
               {/* Desktop PDF Book Viewer */}
-              <div className="hidden sm:flex justify-center">
+              <div className="hidden sm:flex flex-col items-center">
                 <motion.div 
                   {...bind()}
                   className="bg-white rounded-lg shadow-lg p-4 sm:p-8 cursor-grab active:cursor-grabbing relative select-none w-full max-w-4xl mx-auto"
-                  style={{ 
-                    minHeight: '400px',
-                    overflow: 'hidden',
-                    touchAction: 'none' // Prevent default touch behaviors
-                  }}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                  style={{ touchAction: 'none' }}
                 >
-              {/* PDF Content */}
-              <div className="overflow-hidden relative">
-                {/* Left Arrow */}
-                <button
-                  onClick={goToPrevPage}
-                  disabled={pageNumber <= 1 || isFlipping}
-                  className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-gray-600 hover:bg-gray-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg transition-colors duration-200 z-10 hidden sm:block"
-                >
-                  ←
-                </button>
-                
-                {/* Right Arrow */}
-                <button
-                  onClick={goToNextPage}
-                  disabled={pageNumber >= numPages || isFlipping}
-                  className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-gray-600 hover:bg-gray-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg transition-colors duration-200 z-10 hidden sm:block"
-                >
-                  →
-                </button>
-                
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={pageNumber}
-                    initial={{ opacity: 0, rotateY: 90 }}
-                    animate={{ opacity: 1, rotateY: 0 }}
-                    exit={{ opacity: 0, rotateY: -90 }}
-                    transition={{ duration: 0.3 }}
-                    className="flex justify-center"
-                  >
-                    {preloadedPages.has(pageNumber) ? (
-                      <div className="shadow-lg rounded overflow-hidden">
-                        <img 
-                          src={preloadedPages.get(pageNumber).toDataURL()} 
-                          alt={`Menu page ${pageNumber}`}
-                          className="max-w-full h-auto"
-                          style={{ width: pdfWidth }}
-                          onLoad={() => console.log(`Preloaded page ${pageNumber} loaded`)}
-                        />
-                      </div>
-                    ) : (
-                      <Document
-                        file="/Menukaart-aftrap.pdf"
-                        onLoadSuccess={onDocumentLoadSuccess}
-                        className="flex justify-center"
+                  <div className="relative flex justify-center items-center">
+                    {/* Left Arrow */}
+                    <button
+                      onClick={goToPrevPage}
+                      disabled={pageNumber <= 1 || isFlipping}
+                      className="absolute left-0 top-1/2 -translate-y-1/2 bg-gray-600 hover:bg-gray-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg transition-colors duration-200 z-10"
+                    >
+                      ←
+                    </button>
+                    
+                    {/* Right Arrow */}
+                    <button
+                      onClick={goToNextPage}
+                      disabled={pageNumber >= numPages || isFlipping}
+                      className="absolute right-0 top-1/2 -translate-y-1/2 bg-gray-600 hover:bg-gray-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg transition-colors duration-200 z-10"
+                    >
+                      →
+                    </button>
+                    
+                    <AnimatePresence mode="wait">
+                      <motion.div
+                        key={pageNumber}
+                        initial={{ opacity: 0, rotateY: 90 }}
+                        animate={{ opacity: 1, rotateY: 0 }}
+                        exit={{ opacity: 0, rotateY: -90 }}
+                        transition={{ duration: 0.3 }}
+                        className="flex justify-center px-12"
                       >
-                        <Page
-                          pageNumber={pageNumber}
-                          width={pdfWidth}
-                          className="shadow-lg rounded"
-                          renderTextLayer={false}
-                          renderAnnotationLayer={false}
-                          onLoadSuccess={() => console.log(`React-PDF page ${pageNumber} loaded`)}
-                        />
-                      </Document>
-                    )}
-                  </motion.div>
-                </AnimatePresence>
-                
-                {/* Bottom Controls Overlay */}
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-white from-40% via-white via-70% to-transparent pt-20 pb-8">
-                  {/* Page Counter */}
-                  <div className="flex justify-center mb-2">
-                    <span className="text-lg font-semibold text-gray-700 flex items-center">
+                        {preloadedPages.has(pageNumber) ? (
+                          <div className="shadow-lg rounded">
+                            <img 
+                              src={preloadedPages.get(pageNumber).toDataURL()} 
+                              alt={`Menu page ${pageNumber}`}
+                              className="max-w-full h-auto block"
+                              style={{ width: pdfWidth }}
+                            />
+                          </div>
+                        ) : (
+                          <Document
+                            file="/Menukaart-aftrap.pdf"
+                            onLoadSuccess={onDocumentLoadSuccess}
+                            className="flex justify-center"
+                          >
+                            <Page
+                              pageNumber={pageNumber}
+                              width={pdfWidth}
+                              className="shadow-lg rounded"
+                              renderTextLayer={false}
+                              renderAnnotationLayer={false}
+                            />
+                          </Document>
+                        )}
+                      </motion.div>
+                    </AnimatePresence>
+                  </div>
+                </motion.div>
+
+                {/* Controls below the PDF */}
+                <div className="mt-6 text-center">
+                  <div className="mb-4">
+                    <span className="text-lg font-semibold text-gray-700">
                       Pagina {pageNumber} van {numPages}
                     </span>
                   </div>
-                  
-                  {/* Swipe Instruction */}
-                  <div className="flex justify-center mb-4 sm:hidden">
-                    <span className="text-sm text-gray-600 text-center">
-                      Veeg om naar de volgende bladzijde te gaan
-                    </span>
-                  </div>
-                  
-                  {/* Open PDF Button */}
-                  <div className="flex justify-center">
-                    <button
-                      onClick={openPdfInNewTab}
-                      className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors duration-200 font-medium"
-                    >
-                      📄 Open PDF in nieuw tabblad
-                    </button>
-                  </div>
+                  <button
+                    onClick={openPdfInNewTab}
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors duration-200 font-medium"
+                  >
+                    📄 Open PDF in nieuw tabblad
+                  </button>
                 </div>
-              </div>
-              
-            </motion.div>
               </div>
             </div>
           </section>
